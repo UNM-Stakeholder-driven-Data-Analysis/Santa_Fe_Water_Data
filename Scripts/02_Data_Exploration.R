@@ -170,57 +170,17 @@ library(ggmap)
 aoi_boundary_SF <- st_read(
   "Shape_File_Data/WaterPressureZone.shp")
 
-print(sfmap) %>%
-  (geom_polygon(data = aoi_boundary_SF, mapping = aes(x=lon, y=lat, group=group)))
-    
-    
-    
-#coord_equal() %>%
-#coord_map() %>%
-#color= "red"))
-
-ggplot() +
-  geom_raster(data = aoi_boundary_SF, aes(x = x, y = y, fill = HARV_chmCrop)) +
-  geom_sf(data = lines_HARV, color = "black") +
-  geom_sf(data = aoi_boundary_HARV, color = "grey20", size = 1) +
-  geom_sf(data = point_HARV, pch = 8) +
-  ggtitle("NEON Harvard Forest Field Site w/ Canopy Height Model") + 
-  coord_sf()
-
-
-
-
-ggplot() +
-  geom_sf(data = aoi_boundary_SF, aes(color = "red"), size = 1) +
-  scale_color_manual(values = colors) +
-  ggtitle("Boundaries") + 
-  coord_sf()
-
-
-
-
-print(sfmap) +
-  geom_polygon(aes(x=lon, y=lat, group=group)) ,
-  coord_equal() +
-  data = aoi_boundary_SF ,
-  color= "dark red" , alpha=.2 , linewidth=.2) 
-
-print(sfmap) + 
-  geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan1") + 
-  ggtitle("WaterPressureZone") + 
-  coord_sf() 
-
-
-
 WPZ <- ggplot() + 
   geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan1") + 
   ggtitle("WaterPressureZone") + 
   coord_sf() 
-print(WPZ)
+print(WPZ) 
 
-print(sfmap) + geom_polygon(data= aoi_boundary_SF, aes(x = 35.6870, y = 105.9378))
-
-
+shape_overlay <- print(sfmap) +
+  geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan1") + 
+  ggplot(WPZ) + 
+  ggtitle("WaterPressureZone") + 
+  coord_sf() 
 
 
 
