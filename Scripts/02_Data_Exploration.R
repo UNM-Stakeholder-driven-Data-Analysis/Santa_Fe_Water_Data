@@ -182,7 +182,9 @@ shape_overlay <- print(sfmap) +
   ggtitle("WaterPressureZone") + 
   coord_sf() 
 
-
+ggmap(get_googlemap("Santa Fe", maptype = "terrain")) + 
+  geom_sf(data = aoi_boundary_SF, inherit.aes = FALSE, fill="blue") +
+  coord_sf()
 
 ####grid plot####
 
