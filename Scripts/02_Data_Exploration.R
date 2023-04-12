@@ -4,15 +4,12 @@
 # need to schedule meeting with Janie to be sure that the drop off zones for water delivery system corresponds to cannabis producing 
 
 #### libraries ####
-install.packages("tidyverse")
 library(tidyverse)
 library(lubridate)
 library(erikmisc)
-install.packages("MARSS")
 library(MARSS)
 library(nlme)
 library(zoo)
-install.packages("ggmap")
 library("ggmap")
 
 #### load data ####
@@ -171,10 +168,11 @@ aoi_boundary_SF <- st_read(
   "Shape_File_Data/WaterPressureZone.shp")
 
 WPZ <- ggplot() + 
-  geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan1") + 
-  ggtitle("WaterPressureZone") + 
+  geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan", aes(x=lon, y=lat)) + 
+  ggtitle("Water Pressure Zones in the city of Santa fe") + 
   coord_sf() 
 print(WPZ) 
+ggsave("WPZ")
 
 shape_overlay <- print(sfmap) +
   geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan1") + 
