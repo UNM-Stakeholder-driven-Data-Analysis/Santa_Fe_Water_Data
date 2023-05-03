@@ -11,6 +11,8 @@ library(MARSS)
 library(nlme)
 library(zoo)
 library(lme4)
+library(chron)
+library("dates")
 library("ggmap")
 
 #### load data ####
@@ -52,7 +54,14 @@ dat_sub <-
       Month                               = Month.Name
     , Total_Comsumption_Gal               = Total.Consumption..gal.
    )
+####Combining columns####
+dat_sub$date%>%
+  paste(dat_sub$Month, dat_sub$Year)
 
+####Format Date/Time####
+dat_sub$Month_2 =match(dat_sub$Month , month.abb)
+
+dat_sub$Date=as.Date(paste(dat_sub$Year,dat_sub$Month_2, "01", sep="-"))
 
 ####Water use by zone ONLY####
 dat_zone00 = dat_sub[dat_sub$Zone=="ZONE 00",]
