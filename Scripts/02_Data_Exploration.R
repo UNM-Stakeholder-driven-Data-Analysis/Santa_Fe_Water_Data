@@ -31,6 +31,9 @@ str(dat)
 sum(is.na(dat))
 sum(is.na(dat_sub))
 
+head(dat_sub$Date)
+tail(dat_sub$Date)
+
 ####selecting variables####
 
 dat_sub <-
@@ -76,7 +79,7 @@ dat_zone7 = dat_sub[dat_sub$Zone=="ZONE 7",]
 dat_zone8 = dat_sub[dat_sub$Zone=="ZONE 8",]
 dat_zone9 = dat_sub[dat_sub$Zone=="ZONE 9",]
 
-#####Graphing plots by Zone####
+####Graphing plots by Zone####
 Zones <- ggplot(data = dat_zones, aes(x=Month, y=Total_Comsumption_Gal))+
   geom_point()+
   geom_boxplot()+
@@ -262,6 +265,17 @@ ggsave("Zone9.png", plot = Zone9)
 library(gridExtra)
 grid_zones<-grid.arrange(grobs = list(Zone00, Zone0, Zone1, Zone2, Zone3, Zone4, Zone5, Zone6, Zone7, Zone8, Zone9), nrow=4)
 ggsave("grid_zones.png", plot = grid_zones)
+
+####TimeSeries Analysis####
+library(tseries)
+data("dat_zone0")
+
+
+
+timeseries<-ts(data=dat_zone0$Date, start = "2017-01", end = "2021-01", frequency = 40)
+print(timeseries)
+plot(timeseries)
+
 
 ####nlme model####
 
