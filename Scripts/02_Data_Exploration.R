@@ -12,7 +12,6 @@ library(nlme)
 library(zoo)
 library(lme4)
 library(chron)
-library("dates")
 library("ggmap")
 
 #### load data ####
@@ -46,7 +45,7 @@ Month.Name
     , Month.Name
     )
 
-#checking variable dimensions
+####checking variable dimensions####
 dim(dat_sub)
 str(dat_sub)
 
@@ -266,15 +265,29 @@ library(gridExtra)
 grid_zones<-grid.arrange(grobs = list(Zone00, Zone0, Zone1, Zone2, Zone3, Zone4, Zone5, Zone6, Zone7, Zone8, Zone9), nrow=4)
 ggsave("grid_zones.png", plot = grid_zones)
 
+####Means####
+M1<-mean(dat_sub[dat_sub$Year == "2016"| dat_sub$Zone == "Zone 1", "Total_Comsumption_Gal"])
+head(dat_sub)
+
+M2<-mean(dat_sub[dat_sub$Month_2 == "2", "Total_Comsumption_Gal"])
+M3<-mean(dat_sub[dat_sub$Month_2 == "3", "Total_Comsumption_Gal"])
+M4<-mean(dat_sub[dat_sub$Month_2 == "4", "Total_Comsumption_Gal"])
+M5<-mean(dat_sub[dat_sub$Month_2 == "5", "Total_Comsumption_Gal"])
+M6<-mean(dat_sub[dat_sub$Month_2 == "6", "Total_Comsumption_Gal"])
+M7<-mean(dat_sub[dat_sub$Month_2 == "7", "Total_Comsumption_Gal"])
+M8<-mean(dat_sub[dat_sub$Month_2 == "8", "Total_Comsumption_Gal"])
+M9<-mean(dat_sub[dat_sub$Month_2 == "9", "Total_Comsumption_Gal"])
+M10<-mean(dat_sub[dat_sub$Month_2 == "10", "Total_Comsumption_Gal"])
+M11<-mean(dat_sub[dat_sub$Month_2 == "11", "Total_Comsumption_Gal"])
+M12<-mean(dat_sub[dat_sub$Month_2 == "12", "Total_Comsumption_Gal"])
+
 ####TimeSeries Analysis####
-library(tseries)
-data("dat_zone0")
+DF<-dat_sub%>%group_by(Year, Zone)%>%summarise(meanYZ = mean(Total_Comsumption_Gal))
 
-
-
-timeseries<-ts(data=dat_zone0$Date, start = "2017-01", end = "2021-01", frequency = 40)
-print(timeseries)
-plot(timeseries)
+ggplot(DF, aes(x=Year, y=meanYZ, color=Zone))+
+  scale_y_log10()+
+  geom_path()+
+  geom_point()+
 
 
 ####nlme model####

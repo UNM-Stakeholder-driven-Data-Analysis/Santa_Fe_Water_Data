@@ -6,7 +6,7 @@ Zones <- ggplot(data = dat_zones, aes(x=Month, y=Total_Comsumption_Gal))+
     geom = "point",
     fun = "mean",
     col = "black",
-    size = 3,
+    size = 3
     shape = 24,
     fill = "red") +
   facet_wrap(~Zone)
