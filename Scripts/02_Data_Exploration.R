@@ -266,30 +266,30 @@ grid_zones<-grid.arrange(grobs = list(Zone00, Zone0, Zone1, Zone2, Zone3, Zone4,
 ggsave("grid_zones.png", plot = grid_zones)
 
 ####Means####
-M1<-mean(dat_sub[dat_sub$Year == "2016"| dat_sub$Zone == "Zone 1", "Total_Comsumption_Gal"])
-head(dat_sub)
-
-M2<-mean(dat_sub[dat_sub$Month_2 == "2", "Total_Comsumption_Gal"])
-M3<-mean(dat_sub[dat_sub$Month_2 == "3", "Total_Comsumption_Gal"])
-M4<-mean(dat_sub[dat_sub$Month_2 == "4", "Total_Comsumption_Gal"])
-M5<-mean(dat_sub[dat_sub$Month_2 == "5", "Total_Comsumption_Gal"])
-M6<-mean(dat_sub[dat_sub$Month_2 == "6", "Total_Comsumption_Gal"])
-M7<-mean(dat_sub[dat_sub$Month_2 == "7", "Total_Comsumption_Gal"])
-M8<-mean(dat_sub[dat_sub$Month_2 == "8", "Total_Comsumption_Gal"])
-M9<-mean(dat_sub[dat_sub$Month_2 == "9", "Total_Comsumption_Gal"])
-M10<-mean(dat_sub[dat_sub$Month_2 == "10", "Total_Comsumption_Gal"])
-M11<-mean(dat_sub[dat_sub$Month_2 == "11", "Total_Comsumption_Gal"])
-M12<-mean(dat_sub[dat_sub$Month_2 == "12", "Total_Comsumption_Gal"])
+##This will run means per month, and total consumption
+#M1<-mean(dat_sub[dat_sub$Month_2 == "1", "Total_Comsumption_Gal"])
+#M2<-mean(dat_sub[dat_sub$Month_2 == "2", "Total_Comsumption_Gal"])
+#M3<-mean(dat_sub[dat_sub$Month_2 == "3", "Total_Comsumption_Gal"])
+#M4<-mean(dat_sub[dat_sub$Month_2 == "4", "Total_Comsumption_Gal"])
+#M5<-mean(dat_sub[dat_sub$Month_2 == "5", "Total_Comsumption_Gal"])
+#M6<-mean(dat_sub[dat_sub$Month_2 == "6", "Total_Comsumption_Gal"])
+#M7<-mean(dat_sub[dat_sub$Month_2 == "7", "Total_Comsumption_Gal"])
+#M8<-mean(dat_sub[dat_sub$Month_2 == "8", "Total_Comsumption_Gal"])
+#M9<-mean(dat_sub[dat_sub$Month_2 == "9", "Total_Comsumption_Gal"])
+#M10<-mean(dat_sub[dat_sub$Month_2 == "10", "Total_Comsumption_Gal"])
+#M11<-mean(dat_sub[dat_sub$Month_2 == "11", "Total_Comsumption_Gal"])
+#M12<-mean(dat_sub[dat_sub$Month_2 == "12", "Total_Comsumption_Gal"])
 
 ####TimeSeries Analysis####
+#This will take the mean of the year, zone, and total consumption
 DF<-dat_sub%>%group_by(Year, Zone)%>%summarise(meanYZ = mean(Total_Comsumption_Gal))
 
+#This code will plot the time series of different zones on a log10 scale
 ggplot(DF, aes(x=Year, y=meanYZ, color=Zone))+
   scale_y_log10()+
   geom_path()+
   geom_point()+
-
-
+  
 ####nlme model####
 
 
