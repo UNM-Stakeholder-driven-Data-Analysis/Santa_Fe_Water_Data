@@ -66,22 +66,3 @@ DF %>%
   ggplot(aes(x = Year, y = meanYZ)) + 
   geom_boxplot() + facet_grid(~Year)
 
-
-####plotting map####
-register_google(key = "AIzaSyAEUCxlN7Nvje2a24PW065bblJsCNH3ekg") 
-santa_fe <- geocode("Santa Fe, New Mexico") 
-print.data.frame(santa_fe)
-
-nmmap <-ggmap(get_googlemap("New Mexico", zoom = 7, maptype = "roadmap"))
-print(nmmap)
-
-nmmap_sat <-ggmap(get_googlemap("New Mexico", zoom = 7, maptype = "terrain"))
-print(nmmap_sat)
-
-sfmapsat <-ggmap(get_googlemap("Santa Fe", zoom = 12, maptype = "satellite"))
-print(sfmapsat)
-
-sfmap <-ggmap(get_googlemap("Santa Fe", zoom = 12, maptype = "terrain"))
-print(sfmap)
-
-ggsave("~/Desktop/Stakeholder Driven Analysis/Santa_Fe_Water_Data/Inside_Data")
