@@ -1,3 +1,60 @@
+library(tidyverse)
+library(lubridate)
+library(erikmisc)
+library(MARSS)
+library(nlme)
+library(zoo)
+library(lme4)
+library(car) 
+library(chron)
+library(emmeans)
+
+#### load data ####
+dat = read.csv("Outside_Data /SantaFeMonthlyDataExport_050920224.csv" , header = TRUE)
+#non-scientific notation
+options(scipen = 999)
+
+####selecting variables####
+dat_sub <-
+  dat %>% 
+  dplyr::select(
+    Month.Name
+    , Year
+    , Zone
+    , Total.Consumption..gal.
+    , Month.Name
+  )
+
+#renaming variables
+dat_sub <-
+  dat_sub %>%
+  dplyr::rename(
+    Month                               = Month.Name
+    , Total_Comsumption_Gal               = Total.Consumption..gal.
+  )
+
+####Format Date/Time####
+dat_sub$Month_2 =match(dat_sub$Month , month.abb)
+
+dat_sub$Date=as.Date(paste(dat_sub$Year,dat_sub$Month_2, "01", sep="-"))
+
+####Combining columns####
+dat_sub$date%>%
+  paste(dat_sub$Month, dat_sub$Year)
+
+####Water use by zone ONLY####
+dat_zone00 = dat_sub[dat_sub$Zone=="ZONE 00",]
+dat_zone0 = dat_sub[dat_sub$Zone=="ZONE 0",]
+dat_zone1 = dat_sub[dat_sub$Zone=="ZONE 1",]
+dat_zone2 = dat_sub[dat_sub$Zone=="ZONE 2",]
+dat_zone3 = dat_sub[dat_sub$Zone=="ZONE 3",]
+dat_zone4 = dat_sub[dat_sub$Zone=="ZONE 4",]
+dat_zone5 = dat_sub[dat_sub$Zone=="ZONE 5",]
+dat_zone6 = dat_sub[dat_sub$Zone=="ZONE 6",]
+dat_zone7 = dat_sub[dat_sub$Zone=="ZONE 7",]
+dat_zone8 = dat_sub[dat_sub$Zone=="ZONE 8",]
+dat_zone9 = dat_sub[dat_sub$Zone=="ZONE 9",]
+
 ####Graphing plots by Zone####
 Zones <- ggplot(data = dat_zones, aes(x=Month, y=Total_Comsumption_Gal))+
   geom_point()+
@@ -6,7 +63,7 @@ Zones <- ggplot(data = dat_zones, aes(x=Month, y=Total_Comsumption_Gal))+
     geom = "point",
     fun = "mean",
     col = "black",
-    size = 3
+    size = 3,
     shape = 24,
     fill = "red") +
   facet_wrap(~Zone)
@@ -180,7 +237,7 @@ Zone9 <- ggplot(data = dat_zone9, aes(x=Year, y=Total_Comsumption_Gal))+
 print(Zone9)
 ggsave("Zone9.png", plot = Zone9)
 
-####Grid plot####
+####Grid plot arrangement####
 library(gridExtra)
 grid_zones<-grid.arrange(grobs = list(Zone00, Zone0, Zone1, Zone2, Zone3, Zone4, Zone5, Zone6, Zone7, Zone8, Zone9), nrow=4)
 ggsave("grid_zones.png", plot = grid_zones)

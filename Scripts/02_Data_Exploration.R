@@ -10,8 +10,9 @@ library(erikmisc)
 library(MARSS)
 library(nlme)
 library(zoo)
-library(lme4)
+library(car) # for Anova(), vif()
 library(chron)
+library(emmeans)
 library("ggmap")
 
 #### load data ####
@@ -29,241 +30,12 @@ tail(dat$Year)
 str(dat)
 sum(is.na(dat))
 sum(is.na(dat_sub))
-
 head(dat_sub$Date)
 tail(dat_sub$Date)
-
-####selecting variables####
-
-dat_sub <-
-  dat %>% 
-  dplyr::select(
-Month.Name
-    , Year
-    , Zone
-    , Total.Consumption..gal.
-    , Month.Name
-    )
 
 ####checking variable dimensions####
 dim(dat_sub)
 str(dat_sub)
-
-#renaming variables
-dat_sub <-
-  dat_sub %>%
-  dplyr::rename(
-      Month                               = Month.Name
-    , Total_Comsumption_Gal               = Total.Consumption..gal.
-   )
-####Combining columns####
-dat_sub$date%>%
-  paste(dat_sub$Month, dat_sub$Year)
-
-####Format Date/Time####
-dat_sub$Month_2 =match(dat_sub$Month , month.abb)
-
-dat_sub$Date=as.Date(paste(dat_sub$Year,dat_sub$Month_2, "01", sep="-"))
-
-####Water use by zone ONLY####
-dat_zone00 = dat_sub[dat_sub$Zone=="ZONE 00",]
-dat_zone0 = dat_sub[dat_sub$Zone=="ZONE 0",]
-dat_zone1 = dat_sub[dat_sub$Zone=="ZONE 1",]
-dat_zone2 = dat_sub[dat_sub$Zone=="ZONE 2",]
-dat_zone3 = dat_sub[dat_sub$Zone=="ZONE 3",]
-dat_zone4 = dat_sub[dat_sub$Zone=="ZONE 4",]
-dat_zone5 = dat_sub[dat_sub$Zone=="ZONE 5",]
-dat_zone6 = dat_sub[dat_sub$Zone=="ZONE 6",]
-dat_zone7 = dat_sub[dat_sub$Zone=="ZONE 7",]
-dat_zone8 = dat_sub[dat_sub$Zone=="ZONE 8",]
-dat_zone9 = dat_sub[dat_sub$Zone=="ZONE 9",]
-
-####Graphing plots by Zone####
-Zones <- ggplot(data = dat_zones, aes(x=Month, y=Total_Comsumption_Gal))+
-  geom_point()+
-  geom_boxplot()+
-  stat_summary(
-   geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~Zone)
-print(Zones)
-ggsave("Zones.png", plot = Zones)
-
-####Plotting by different zones####
-Zone00 <- ggplot(data = dat_zone00, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  1/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone00")
-print(Zone00)
-ggsave("Zone00.png", plot = Zone00)
-
-Zone0 <- ggplot(data = dat_zone0, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  1/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone0")
-print(Zone0)
-ggsave("Zone0.png", plot = Zone0)
-
-Zone1 <- ggplot(data = dat_zone1, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  0.25/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone1")
-print(Zone1)
-ggsave("Zone1.png", plot = Zone1)
-
-Zone2 <- ggplot(data = dat_zone2, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  0.15/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone2")
-print(Zone2)
-ggsave("Zone2.png", plot = Zone2)
-
-
-Zone3 <- ggplot(data = dat_zone3, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  0.15/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone3")
-print(Zone3)
-ggsave("Zone3.png", plot = Zone3)
-
-Zone4 <- ggplot(data = dat_zone4, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  .10/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone4")
-print(Zone4)
-ggsave("Zone4.png", plot = Zone4)
-
-Zone5 <- ggplot(data = dat_zone5, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  .10/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone5")
-print(Zone5)
-ggsave("Zone5.png", plot = Zone5)
-
-Zone6 <- ggplot(data = dat_zone6, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  .10/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone6")
-print(Zone6)
-ggsave("Zone6.png", plot = Zone6)
-
-Zone7 <- ggplot(data = dat_zone7, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+
-  geom_jitter(alpha =  .10/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone7")
-print(Zone7)
-ggsave("Zone7.png", plot = Zone7)
-
-Zone8 <- ggplot(data = dat_zone8, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+ 
-  geom_jitter(alpha =  .10/10, width = 0.25) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone8")
-print(Zone8)
-ggsave("Zone8.png", plot = Zone8)
-
- Zone9 <- ggplot(data = dat_zone9, aes(x=Year, y=Total_Comsumption_Gal))+
-  scale_y_log10() +
-  geom_point()+ 
-   geom_jitter(alpha =  10/10, width = 1) +
-  stat_summary(
-    geom = "point",
-    fun = "mean",
-    col = "black",
-    size = 3,
-    shape = 24,
-    fill = "red") +
-  facet_wrap(~"Zone9")
-print(Zone9)
-ggsave("Zone9.png", plot = Zone9)
-
-####Grid plot####
-library(gridExtra)
-grid_zones<-grid.arrange(grobs = list(Zone00, Zone0, Zone1, Zone2, Zone3, Zone4, Zone5, Zone6, Zone7, Zone8, Zone9), nrow=4)
-ggsave("grid_zones.png", plot = grid_zones)
 
 ####Means####
 ##This will run means per month, and total consumption
@@ -279,19 +51,20 @@ ggsave("grid_zones.png", plot = grid_zones)
 #M10<-mean(dat_sub[dat_sub$Month_2 == "10", "Total_Comsumption_Gal"])
 #M11<-mean(dat_sub[dat_sub$Month_2 == "11", "Total_Comsumption_Gal"])
 #M12<-mean(dat_sub[dat_sub$Month_2 == "12", "Total_Comsumption_Gal"])
-
-####TimeSeries Analysis####
-#This will take the mean of the year, zone, and total consumption
-DF<-dat_sub%>%group_by(Year, Zone)%>%summarise(meanYZ = mean(Total_Comsumption_Gal))
-
-#This code will plot the time series of different zones on a log10 scale
-ggplot(DF, aes(x=Year, y=meanYZ, color=Zone))+
-  scale_y_log10()+
-  geom_path()+
-  geom_point()+
-  
+ 
 ####nlme model####
-
+# create the linear model
+TWC_Zone <- lm(meanYZ ~ Zone, data = DF, na.action=na.omit)
+# check assumptions
+plot(TWC_Zone)
+# run type 3 ANOVA
+Anova(TWC_Zone, type = 3)
+#post-hoc test
+DF %>%
+  select(meanYZ, Zone, Year) %>%
+  drop_na() %>%
+  ggplot(aes(x = Year, y = meanYZ)) + 
+  geom_boxplot() + facet_grid(~Year)
 
 
 ####plotting map####
@@ -310,29 +83,5 @@ print(sfmapsat)
 
 sfmap <-ggmap(get_googlemap("Santa Fe", zoom = 12, maptype = "terrain"))
 print(sfmap)
-
-####Shapefile Overlay####
-install.packages("rinat")
-library(rinat)
-library(rgdal)
-library(sf)
-library(grid)
-library(ggmap)
-library(terra)
-library(tidyterra)
-
-aoi_boundary_SF <- st_read(
-  "Shape_File_Data/WaterPressureZone.shp")
-
-WPZ <- ggplot() + 
-  geom_sf(data = aoi_boundary_SF, size = 3, color = "black", fill = "cyan") + 
-  ggtitle("Water Pressure Zones in the city of Santa fe") + 
-  coord_sf() 
-print(WPZ) 
-
-mapRaster <- rast(s)
-aoi_boundary_spatve <- vect(aoi_boundary_SF)
-shape_overlay<-ggplot() + geom_spatraster(data=mapRaster) + geom_spatvector(data=aoi_boundary_spatve, fill="red", lab="Zones")
-print(shape_overlay)
 
 ggsave("~/Desktop/Stakeholder Driven Analysis/Santa_Fe_Water_Data/Inside_Data")
